@@ -208,11 +208,22 @@ seal(Of T As Structure)(Input As T) As immutable(Of T)
 เป็นการสร้างลิงค์ลิซด้วย Value tuple 
 
 ```vb
+<Extension>
 put(Of T, V)(O As (V, T), Val As V) As (V, o As (V, T))
 ```
 ```vb
+<Extension>
 link(Of T As Structure, V)(O As (V, T), Length As int) As (l As int, o As (V, T))
 ```
+```vb
+<Extension>
+list(Of T, V As Structure)(Input As V, _Index As Integer) As T
+```
+
+- `put` LIFO หุ้มค่าใหม่ใส่ก่อนหน้าค่าเก่าเช่น `(0,1).put(2).put(3) == (3, (2, (0, 1)));`
+- `link` เพิ่มค่าตัวเลขเอาไว้หน้าสุดเพื่อระบุว่าลิงค์นี้มีสมาชิกเท่าไหร
+- `list` เข้าถึงค่าแบบเดียวกับอาเรย์ด้วยการระบุตำแหน่งที่ แทนการเรียกชื่อสมาชิก
+
 ```vb
 Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
 Link_list.loop(Link_list.l, Sub(G, I) G.o.list(Of String)(I).write)
