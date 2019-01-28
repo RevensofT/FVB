@@ -229,3 +229,15 @@ Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4
 Link_list.loop(Link_list.l, Sub(G, I) G.o.list(Of String)(I).write)
 ' Console write :: Hello my brand new world.
 ```
+***
+# Guildline แนวทางในการเขียนสไตล์ functional
+
+- Stay fresh พยายามรักษาความสดใหม่ของค่านั้นๆ เอาไว้ หรืออีกนัยหนึ่งก็คือแม้ตัวแปรนั้นๆ จะไม่ได้เป็น `immutable` แต่เราก็จะถือว่ามันเป็นตัวแปรแบบแก้ไขค่าไม่ได้
+
+- Less variant ลดละเลิกการใช้ตัวแปรภายในฟังค์ชั่น หรืออย่างน้อยก็ใช้ Anonymous local variant ซึ่งใน VB นั้นจะมี `With statement`อยู่ อย่างไรก็ดีพยายามให้ไม่มีจะดีกว่า
+
+- No side effect ฟังค์ชั่นไหนฟังค์ชั่นนั้น มีหน้าที่อะไรก็ให้ทำไปตามนั้น ไม่ควรแทรกงานอื่นๆ เข้าไปในฟังค์ชั่น ถ้าจะทำอย่างอื่นก็ให้สร้างฟังค์ชั่นใหม่มารับหน้าที่นั้นๆ แทน
+
+### A pure function is a function where the return value is only determined by its input values, without observable side effects. This is how functions in math work: Math.cos(x) will, for the same value of x , always return the same result. Computing it does not change x.
+
+- Short and clear พยายามทำให้ฟังค์ชั่นนั้นๆ สั้นและชัดเจนที่สุดเท่าที่จะทำได้ ไม่อย่างนั้นอาจจะเกิดอาการยืนงงอยู่กลางดง pipeline ได้ง่ายๆ ครับ
