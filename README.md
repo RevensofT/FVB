@@ -6,6 +6,7 @@ Let's embark to functional way !!
 - Tail call loop
 - Recursion
 - Immutable
+- Link list
 ***
 # Object ต่างๆ ที่เกี่ยวข้องกับการเขียนแบบ functional ที่ต้องใช้ประกอบ
 ## Value tuple
@@ -130,3 +131,89 @@ Console.WriteLine(
 
 ## Tail call loop
 การวนแบบทิ้งหางเดิม หรือ `tail call/jmp` นั้นแตกต่างจากการวนด้วย `for` `do` `while` แบบปรกติที่จะใช้คำสั่ง `br/goto` ในการทวนคำสั่งภายในฟังค์ชั่นนั้นๆ ซึ่งไม่ต่างจากการเขียนฟังค์ชั่นยาวๆ เลยสำหรับ CPU
+### ฟั้งค์ชั่นในกลุ่ม Tail call loop นี้จะไม่ทำการอัพเดตนำเข้าค่าเหมือนกับฟังค์ชั่นในกลุ่ม Recursion
+
+- Array loop
+```vb
+<Extension>
+each(Of T)(Array As T(), For_each As Action(Of T)) As T()
+```
+```vb
+Call {1, 2, 3, 4, 5}.each(Sub(Item) Console.Write(Item))
+' Console write :: 54321
+```
+
+```vb
+<Extension>
+each(Of T, V)(Array As T(), Param As V, For_each As Action(Of T, V)) As (T(), V)
+```
+```vb
+Call {1, 2, 3, 4, 5}.each(10, Sub(Item, P) Console.Write(P - Item))
+' Console write :: 56789
+```
+
+```vb
+<Extension>
+loop(Of T)(Array As T(), Do_loop As Action(Of T(), Integer)) As T()
+```
+```vb
+Call {1, 2, 3, 4, 5}.loop(Sub(Array, Index) Console.Write(Array(Index)))
+' Console write :: 54321
+```
+
+```vb
+<Extension>
+loop(Of T, V)(Array As T(), Param As V, Do_loop As Action(Of T(), Integer, V)) As (T(), V)
+```
+```vb
+Call {1, 2, 3, 4, 5}.loop(10, Sub(Item, Index, P) Console.Write(P - Array(Index)))
+' Console write :: 56789
+```
+- Do loop
+```vb
+<Extension>
+loop(Of T)(Data As T, Max As Integer, Do_loop As Action(Of T, Integer)) As T
+```
+```vb
+Call {1, 2, 3, 4, 5}.loop(2, Sub(Array, Index) Console.Write(Array(Index)))
+' Console write :: 321
+```
+
+```vb
+<Extension>
+loop(Of T)(Data As T, Max As Integer, Min As Integer, Do_loop As Action(Of T, Integer)) As T
+```
+```vb
+Call {1, 2, 3, 4, 5}.loop(3, 1, Sub(Array, Index) Console.Write(Array(Index)))
+' Console write :: 234
+```
+
+## Immutable
+เนื่องจากการเขียนแบบ functional นี้จะใช้ value type เสียมากผมเลยเห็นว่าการที่สามารถกำหนดให้ค่านั้นๆ เปลี่ยนแปลงไม่ได้จะช่วยป้องกันเหตุที่คาดไม่ถึงได้
+```vb
+refer(Of T As Structure)(Input As T) As reference(Of T)
+```
+```vb
+read_only(Of T As Structure)(Input As T) As constant(Of T)
+```
+```vb
+seal(Of T As Structure)(Input As T) As immutable(Of T)
+```
+- reference เป็นคลาสช่วยในการ boxing ค่า
+- constant เป็นการ boxing ค่าเช่นกันแต่ค่านี้จะเปลี่ยนแปลงไม่ได้
+- immutable เป็นการทำให้ค่าเปลี่ยนแปลงไม่ได้เฉยๆ ไม่ได้ทำการ boxing แต่อย่างใด
+
+## Link list
+เป็นการสร้างลิงค์ลิซด้วย Value tuple 
+
+```vb
+put(Of T, V)(O As (V, T), Val As V) As (V, o As (V, T))
+```
+```vb
+link(Of T As Structure, V)(O As (V, T), Length As int) As (l As int, o As (V, T))
+```
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.loop(Link_list.l, Sub(G, I) G.o.list(Of String)(I).write)
+' Console write :: Hello my brand new world.
+```
