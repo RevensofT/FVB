@@ -126,8 +126,6 @@ Console.WriteLine(
 )
 ' Console write :: 120
 ```
-```vb
-```
 
 ## Tail call loop
 การวนแบบทิ้งหางเดิม หรือ `tail call/jmp` นั้นแตกต่างจากการวนด้วย `for` `do` `while` แบบปรกติที่จะใช้คำสั่ง `br/goto` ในการทวนคำสั่งภายในฟังค์ชั่นนั้นๆ ซึ่งไม่ต่างจากการเขียนฟังค์ชั่นยาวๆ เลยสำหรับ CPU
@@ -191,12 +189,15 @@ Call {1, 2, 3, 4, 5}.loop(3, 1, Sub(Array, Index) Console.Write(Array(Index)))
 ## Immutable
 เนื่องจากการเขียนแบบ functional นี้จะใช้ value type เสียมากผมเลยเห็นว่าการที่สามารถกำหนดให้ค่านั้นๆ เปลี่ยนแปลงไม่ได้จะช่วยป้องกันเหตุที่คาดไม่ถึงได้
 ```vb
+<Extension>
 refer(Of T As Structure)(Input As T) As reference(Of T)
 ```
 ```vb
+<Extension>
 read_only(Of T As Structure)(Input As T) As constant(Of T)
 ```
 ```vb
+<Extension>
 seal(Of T As Structure)(Input As T) As immutable(Of T)
 ```
 - reference เป็นคลาสช่วยในการ boxing ค่า
