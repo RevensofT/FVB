@@ -114,8 +114,8 @@ recur(Of T)(Data As (Is_end As Boolean, o As T), Recursive_method As Func(Of (Is
 ```
 
 - `Data` 
-1. `Is_end` หากมีค่าเป็น True ให้ทำการหยุดฟังค์ชั่น 
-2. `o` ข้อมูลที่จำเป็นที่เราต้องใช้เพื่อให้ได้ผลลัพย์ที่ต้องการ
+  - `Is_end` หากมีค่าเป็น True ให้ทำการหยุดฟังค์ชั่น 
+  - `o` ข้อมูลที่จำเป็นที่เราต้องใช้เพื่อให้ได้ผลลัพย์ที่ต้องการ
 - `Recursive_method` ฟังค์ชั่นที่เราต้องการจะเรียกใช้ซ้ำๆ
 
 ```vb
@@ -238,6 +238,6 @@ Link_list.loop(Link_list.l, Sub(G, I) G.o.list(Of String)(I).write)
 
 - No side effect ฟังค์ชั่นไหนฟังค์ชั่นนั้น มีหน้าที่อะไรก็ให้ทำไปตามนั้น ไม่ควรแทรกงานอื่นๆ เข้าไปในฟังค์ชั่น ถ้าจะทำอย่างอื่นก็ให้สร้างฟังค์ชั่นใหม่มารับหน้าที่นั้นๆ แทน
 
-### A pure function is a function where the return value is only determined by its input values, without observable side effects. This is how functions in math work: Math.cos(x) will, for the same value of x , always return the same result. Computing it does not change x.
+> A pure function is a function where the return value is only determined by its input values, without observable side effects. This is how functions in math work: Math.cos(x) will, for the same value of x , always return the same result. Computing it does not change x.
 
 - Short and clear พยายามทำให้ฟังค์ชั่นนั้นๆ สั้นและชัดเจนที่สุดเท่าที่จะทำได้ ไม่อย่างนั้นอาจจะเกิดอาการยืนงงอยู่กลางดง pipeline ได้ง่ายๆ ครับ
