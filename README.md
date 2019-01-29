@@ -3,10 +3,10 @@ Let's embark to functional way !!
 ***
 
 ## ตอนนี้เรามีอะไรกันบ้าง
-- Tail call loop
 - Recursion
-- Immutable
 - Link list
+- Tail call loop
+- Immutable
 ***
 # Object ต่างๆ ที่เกี่ยวข้องกับการเขียนแบบ functional ที่ต้องใช้ประกอบ
 ## Value tuple
@@ -127,6 +127,32 @@ Console.WriteLine(
 ' Console write :: 120
 ```
 
+## Link list
+เป็นการสร้างลิงค์ลิซด้วย Value tuple 
+
+```vb
+<Extension>
+put(Of T, V)(O As (V, T), Val As V) As (V, o As (V, T))
+```
+```vb
+<Extension>
+link(Of T As Structure, V)(O As (V, T), Length As int) As (l As int, o As (V, T))
+```
+```vb
+<Extension>
+list(Of T, V As Structure)(Input As V, _Index As Integer) As T
+```
+
+- `put` LIFO หุ้มค่าใหม่ใส่ก่อนหน้าค่าเก่าเช่น `(0,1).put(2).put(3) == (3, (2, (0, 1)));`
+- `link` เพิ่มค่าตัวเลขเอาไว้หน้าสุดเพื่อระบุว่าลิงค์นี้มีสมาชิกเท่าไหร
+- `list` เข้าถึงค่าแบบเดียวกับอาเรย์ด้วยการระบุตำแหน่งที่ แทนการเรียกชื่อสมาชิก
+
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.loop(Sub(G, I) Console.Write(G.list(Of String)(I)))
+' Console write :: Hello my brand new world.
+```
+
 ## Tail call loop
 การวนแบบทิ้งหางเดิม หรือ `tail call/jmp` นั้นแตกต่างจากการวนด้วย `for` `do` `while` แบบปรกติที่จะใช้คำสั่ง `br/goto` ในการทวนคำสั่งภายในฟังค์ชั่นนั้นๆ ซึ่งไม่ต่างจากการเขียนฟังค์ชั่นยาวๆ เลยสำหรับ CPU
 ### ฟั้งค์ชั่นในกลุ่ม Tail call loop นี้จะไม่ทำการอัพเดตนำเข้าค่าเหมือนกับฟังค์ชั่นในกลุ่ม Recursion
@@ -164,9 +190,52 @@ Call {1, 2, 3, 4, 5}.loop(Sub(Array, Index) Console.Write(Array(Index)))
 loop(Of T, V)(Array As T(), Param As V, Do_loop As Action(Of T(), Integer, V)) As (T(), V)
 ```
 ```vb
-Call {1, 2, 3, 4, 5}.loop(10, Sub(Item, Index, P) Console.Write(P - Array(Index)))
+Call {1, 2, 3, 4, 5}.loop(10, Sub(Array, Index, P) Console.Write(P - Array(Index)))
 ' Console write :: 56789
 ```
+
+- Link list loop
+
+```vb
+<Extension>
+each(Of T As Structure, V)(List As (int, T), For_each As Action(Of V)) As T
+```
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.each(Of String)(Sub(Item) Console.Write(Item))
+' Console write :: Hello my brand new world.
+```
+
+```vb
+<Extension>
+each(Of T As Structure, R, V)(List As (int, T), Param As R, For_each As Action(Of V, R)) As (T, R)
+```
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.each(Of String)("_", Sub(Item, P) Console.Write(Item & P))
+' Console write :: Hello_ my_ brand_ new_ world._
+```
+
+```vb
+<Extension>
+loop(Of T As Structure)(List As (int, T), Do_loop As Action(Of T, Integer)) As T
+```
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.loop(Sub(G, I) Console.Write(G.list(Of String)(I)))
+' Console write :: Hello my brand new world.
+```
+
+```vb
+<Extension>
+loop(Of T As Structure, V)(List As (int, T), Param As V, Do_loop As Action(Of T, Integer, V)) As (T, V)
+```
+```vb
+Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Link_list.loop("_", Sub(G, I, P) Console.Write(G.list(Of String)(I) & P))
+' Console write :: Hello_ my_ brand_ new_ world._
+```
+
 - Do loop
 ```vb
 <Extension>
@@ -203,32 +272,6 @@ seal(Of T As Structure)(Input As T) As immutable(Of T)
 - reference เป็นคลาสช่วยในการ boxing ค่า
 - constant เป็นการ boxing ค่าเช่นกันแต่ค่านี้จะเปลี่ยนแปลงไม่ได้
 - immutable เป็นการทำให้ค่าเปลี่ยนแปลงไม่ได้เฉยๆ ไม่ได้ทำการ boxing แต่อย่างใด
-
-## Link list
-เป็นการสร้างลิงค์ลิซด้วย Value tuple 
-
-```vb
-<Extension>
-put(Of T, V)(O As (V, T), Val As V) As (V, o As (V, T))
-```
-```vb
-<Extension>
-link(Of T As Structure, V)(O As (V, T), Length As int) As (l As int, o As (V, T))
-```
-```vb
-<Extension>
-list(Of T, V As Structure)(Input As V, _Index As Integer) As T
-```
-
-- `put` LIFO หุ้มค่าใหม่ใส่ก่อนหน้าค่าเก่าเช่น `(0,1).put(2).put(3) == (3, (2, (0, 1)));`
-- `link` เพิ่มค่าตัวเลขเอาไว้หน้าสุดเพื่อระบุว่าลิงค์นี้มีสมาชิกเท่าไหร
-- `list` เข้าถึงค่าแบบเดียวกับอาเรย์ด้วยการระบุตำแหน่งที่ แทนการเรียกชื่อสมาชิก
-
-```vb
-Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
-Link_list.loop(Link_list.l, Sub(G, I) G.o.list(Of String)(I).write)
-' Console write :: Hello my brand new world.
-```
 ***
 # Guildline แนวทางในการเขียนสไตล์ functional
 
