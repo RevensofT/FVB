@@ -92,7 +92,7 @@ recursive(Of T)(Data As T, Do_until_condition As Func(Of T, Boolean), Recursive_
 ```vb
 Console.WriteLine(
     (input:=5, sum:=1).recursive(
-        Function(Data As (input As Integer, sum As Integer)) Data.input < 2,
+        Function(Data As (input As Integer, sum As Integer))  Data.input < 2,
         Function(Data As (input As Integer, sum As Integer)) (Data.input - 1, Data.sum * Data.input)
     ).sum
 )
@@ -101,7 +101,7 @@ Console.WriteLine(
 ```vb
 Console.WriteLine(
     (input:=5, sum:=1).recursive(
-        Function(Data) Data.input < 2,
+        Function(Data)  Data.input < 2,
         Function(Data) (Data.input - 1, Data.sum * Data.input)
     ).sum
 )
