@@ -121,7 +121,7 @@ recur(Of T)(Data As (Is_end As Boolean, o As T), Recursive_method As Func(Of (Is
 
 ```vb
 Console.WriteLine(
-    (False, (input:=5, sum:=1)).recur(
+    (input:=5, sum:=1).recur(
         Function(G) (G.input < 2, (G.input - 1, G.sum * G.input))
     ).sum
 )
