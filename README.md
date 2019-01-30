@@ -4,6 +4,7 @@ Let's embark to functional way !!
 
 ## ตอนนี้เรามีอะไรกันบ้าง
 - Recursion
+- Pipeliner
 - Link list
 - Tail call loop
 - Immutable
@@ -126,31 +127,64 @@ Console.WriteLine(
 )
 ' Console write :: 120
 ```
+## Pipeliner
+เป็น method ช่วยให้สามารถทำการอื่นๆ กับ ค่านั้นๆ ได้ในระหว่าง 1 การทำการนั้นๆ ซึ่งตัว Pipeliner จะคืนค่าที่รับเข้ามาเสมอและค่าที่ส่งไปยัง `Method` เองนั้นก็เป็นค่าที่รับเข้ามาเช่นกัน
+```vb
+<Extension>
+call(Of T)(Data As T, Method As Action(Of T)) As T
+```
+```vb
+Dim Word = "Hello".call(Sub(G)Console.Write(G))
+' Word = "Hello"
+' Console write :: Hello
+```
+
+```vb
+<Extension>
+call(Of T, V)(Data As T, Param As V, Method As Action(Of T, V)) As T
+```
+```vb
+Dim Word = "Hello".call(" world.", Sub(G, P)Console.Write(G & P))
+' Word = "Hello"
+' Console write :: Hello world.
+```
 
 ## Link list
 เป็นการสร้างลิงค์ลิซด้วย Value tuple 
 
 ```vb
 <Extension>
-put(Of T, V)(O As (V, T), Val As V) As (V, o As (V, T))
+link(Of T As Structure, V)(O As T) As (l As int, o As T)
 ```
 ```vb
 <Extension>
-link(Of T As Structure, V)(O As (V, T), Length As int) As (l As int, o As (V, T))
+put(Of T As Structure, V)(List As (int, T), Val As V) As (l As int, o As (V, T))
 ```
 ```vb
 <Extension>
 list(Of T, V As Structure)(Input As V, _Index As Integer) As T
 ```
 
-- `put` LIFO หุ้มค่าใหม่ใส่ก่อนหน้าค่าเก่าเช่น `(0,1).put(2).put(3) == (3, (2, (0, 1)));`
-- `link` เพิ่มค่าตัวเลขเอาไว้หน้าสุดเพื่อระบุว่าลิงค์นี้มีสมาชิกเท่าไหร
+- `link` เพิ่มค่าตัวเลขเอาไว้หน้าสุดเพื่อระบุว่าลิงค์นี้มีสมาชิกสุดท้ายลำดับที่เท่าไหร
+- `put` LIFO หุ้มค่าใหม่ใส่ก่อนหน้าค่าเก่าเช่น `(0,1).link.put(2).put(3) == (l:=3, o:=(3, (2, (0, 1))));`
 - `list` เข้าถึงค่าแบบเดียวกับอาเรย์ด้วยการระบุตำแหน่งที่ แทนการเรียกชื่อสมาชิก
 
 ```vb
-Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
+Dim Link_list = (" my", "Hello").link.put(" brand").put(" new").put(" world.")
 Link_list.loop(Sub(G, I) Console.Write(G.list(Of String)(I)))
 ' Console write :: Hello my brand new world.
+```
+
+```vb
+<Extension>
+pop(Of T As Structure, V)(List As (int, (V, T))) As (val As V, list As (int, o As T))
+```
+```vb
+Dim Link_list = (" my", "Hello").link(Of String).put(" brand").put(" new").put(" world.")
+Link_list.pop.call(Sub(G) Console.WriteLine(G.val)).list.each(Of String, String)("_", Sub(Item, P) Console.Write(Item & P))
+
+' Console write :: world.
+' Console write :: Hello_ my_ brand_ new_
 ```
 
 ## Tail call loop
@@ -212,7 +246,7 @@ each(Of T As Structure, R, V)(List As (int, T), Param As R, For_each As Action(O
 ```
 ```vb
 Dim Link_list = (" my", "Hello").put(" brand").put(" new").put(" world.").link(4)
-Link_list.each(Of String)("_", Sub(Item, P) Console.Write(Item & P))
+Link_list.each(Of String, String)("_", Sub(Item, P) Console.Write(Item & P))
 ' Console write :: Hello_ my_ brand_ new_ world._
 ```
 
